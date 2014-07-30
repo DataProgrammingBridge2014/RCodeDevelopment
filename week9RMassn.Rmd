@@ -1,0 +1,117 @@
+﻿<!DOCTYPE HTML>
+<!DOCTYPE html PUBLIC "" ""><HTML><HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8"></HEAD>
+<BODY>
+<PRE>---
+title: "Week 9 R Assignment"
+output: html_document
+---
+
+
+
+
+```{r}
+library(RSQLite)
+setwd('C:/Users/Game/Desktop/')
+sqlite &lt;- dbDriver("SQLite")
+workingdb &lt;- dbConnect(sqlite, "cunyweek9.sqlite")
+dbListTables(workingdb)
+I &lt;- dbSendQuery(workingdb, "SELECT * FROM I")
+Idf &lt;- data.frame(fetch(I, -1))
+II &lt;- dbSendQuery(workingdb, "SELECT * FROM II")
+IIdf &lt;- data.frame(fetch(II, -1))
+III &lt;- dbSendQuery(workingdb, "SELECT * FROM III")
+IIIdf &lt;- data.frame(fetch(III, -1))
+IV &lt;- dbSendQuery(workingdb, "SELECT * FROM IV")
+IVdf &lt;- data.frame(fetch(IV, -1))
+dbDisconnect(workingdb)
+remove(sqlite)
+remove(workingdb)
+remove(I, II, III, IV)
+par(mfrow=c(2,2))
+plot(Idf, main="I")
+abline(lm(Idf$y ~ Idf$x))
+plot(IIdf, main="II")
+abline(lm(IIdf$y ~ IIdf$x))
+plot(IIIdf, main="III")
+abline(lm(IIIdf$y ~ IIIdf$x))
+plot(IVdf, main="IV")
+abline(lm(IVdf$y ~ IVdf$x))
+```
+
+
+We can see that all four have a very similar regression line, but obviously those regression lines don't tell us very much about II, III, or IV
+
+
+```{r}
+summary(Idf)
+```
+
+
+```{r}
+summary(IIdf)
+```
+
+
+```{r}
+summary(IIIdf)
+```
+
+
+```{r}
+summary(IVdf)
+```
+Summary statistics! Now we're getting somewhere.
+
+
+Now let's create linear models and see how they look when graphed: \newpage
+I:
+```{r}
+par(mfrow=c(2,2))
+Ilm &lt;- lm(formula = y ~ x, data = Idf)
+plot(Ilm)
+```
+\newpage
+II:
+```{r}
+par(mfrow=c(2,2))
+IIlm &lt;- lm(formula = y ~ x, data = IIdf)
+plot(IIlm)
+```
+\newpage
+III:
+```{r}
+par(mfrow=c(2,2))
+IIIlm &lt;- lm(formula = y ~ x, data = IIIdf)
+plot(IIIlm)
+```
+\newpage
+IV:
+```{r}
+par(mfrow=c(2,2))
+IVlm &lt;- lm(formula = y ~ x, data = IVdf)
+plot(IVlm)
+```
+
+
+Now we have much better predictors for our data.
+
+
+Influence Measures gives several measures of influence for each observation (Cook's Distance, et) and actually flags observations that it determines are influential by any of the measure
+
+```{r}
+influence.measures(Ilm)
+```
+
+```{r}
+influence.measures(IIlm)
+```
+
+```{r}
+influence.measures(IIIlm)
+```
+
+```{r}
+influence.measures(IVlm)
+```
+</PRE></BODY></HTML>
