@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title></title>
+
+<xxxx src="x"></xxxx>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="x" rel="stylesheet" />
+<link href="x" rel="stylesheet" />
+<xxxx src="x"></xxxx>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link href="x" rel="stylesheet" type="text/css" />
+<xxxx src="x"></xxxx>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<xxxx type="xxxx/xxxxxxxxxx">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</xxxx>
+
+
+
+</head>
+
+<body>
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<div class="container-fluid main-container">
+
+
+
+
+<pre class="r"><code>library(RSQLite)</code></pre>
+<pre><code>## Loading required package: DBI</code></pre>
+<pre class="r"><code>setwd('C:/Users/liyv/Documents')
+sqlite &lt;- dbDriver(&quot;SQLite&quot;)
+workingdb &lt;- dbConnect(sqlite, &quot;cunyweek9.sqlite&quot;)
+dbListTables(workingdb)</code></pre>
+<pre><code>## [1] &quot;I&quot;   &quot;II&quot;  &quot;III&quot; &quot;IV&quot;</code></pre>
+<pre class="r"><code>I &lt;- dbSendQuery(workingdb, &quot;SELECT * FROM I&quot;)
+Idf &lt;- data.frame(fetch(I, -1))
+II &lt;- dbSendQuery(workingdb, &quot;SELECT * FROM II&quot;)
+IIdf &lt;- data.frame(fetch(II, -1))
+III &lt;- dbSendQuery(workingdb, &quot;SELECT * FROM III&quot;)
+IIIdf &lt;- data.frame(fetch(III, -1))
+IV &lt;- dbSendQuery(workingdb, &quot;SELECT * FROM IV&quot;)
+IVdf &lt;- data.frame(fetch(IV, -1))
+dbDisconnect(workingdb)</code></pre>
+<pre><code>## Warning: RS-DBI driver warning: (closing pending result sets before
+## closing this connection)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>remove(sqlite)
+remove(workingdb)
+remove(I, II, III, IV)</code></pre>
+<p>Summary</p>
+<pre class="r"><code>Ilmfit &lt;- lm(Idf$y ~ Idf$x)
+IIlmfit &lt;- lm(IIdf$y ~ IIdf$x)
+IIIlmfit &lt;- lm(IIIdf$y ~ IIIdf$x)
+IVlmfit &lt;- lm(IVdf$y ~ IVdf$x)
+
+summary(Ilmfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Idf$y ~ Idf$x)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.9213 -0.4558 -0.0414  0.7094  1.8388 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)    3.000      1.125    2.67   0.0257 * 
+## Idf$x          0.500      0.118    4.24   0.0022 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.24 on 9 degrees of freedom
+## Multiple R-squared:  0.667,  Adjusted R-squared:  0.629 
+## F-statistic:   18 on 1 and 9 DF,  p-value: 0.00217</code></pre>
+<pre class="r"><code>summary(IIlmfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = IIdf$y ~ IIdf$x)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -1.901 -0.761  0.129  0.949  1.269 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)    3.001      1.125    2.67   0.0258 * 
+## IIdf$x         0.500      0.118    4.24   0.0022 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.24 on 9 degrees of freedom
+## Multiple R-squared:  0.666,  Adjusted R-squared:  0.629 
+## F-statistic:   18 on 1 and 9 DF,  p-value: 0.00218</code></pre>
+<pre class="r"><code>summary(IIIlmfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = IIIdf$y ~ IIIdf$x)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -1.159 -0.615 -0.230  0.154  3.241 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)    3.002      1.124    2.67   0.0256 * 
+## IIIdf$x        0.500      0.118    4.24   0.0022 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.24 on 9 degrees of freedom
+## Multiple R-squared:  0.666,  Adjusted R-squared:  0.629 
+## F-statistic:   18 on 1 and 9 DF,  p-value: 0.00218</code></pre>
+<pre class="r"><code>summary(IVlmfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = IVdf$y ~ IVdf$x)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -1.751 -0.831  0.000  0.809  1.839 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)    3.002      1.124    2.67   0.0256 * 
+## IVdf$x         0.500      0.118    4.24   0.0022 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.24 on 9 degrees of freedom
+## Multiple R-squared:  0.667,  Adjusted R-squared:  0.63 
+## F-statistic:   18 on 1 and 9 DF,  p-value: 0.00216</code></pre>
+
+
+</div>
+
+<xxxx>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</xxxx>
+
+<!-- dynamically load mathjax for compatibility with --self-contained -->
+<xxxx>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "xxxx/xxxxxxxxxx";
+    script.src  = "https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</xxxx>
+
+</body>
+</html>
