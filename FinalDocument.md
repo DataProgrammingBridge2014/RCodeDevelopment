@@ -11,7 +11,7 @@ Here we should break up our documentation into sections with our code and suppor
 Below is all of the code previously submitted through the discussion forums.
 
 **Brett's initial code:**
-``` {r}
+``` {r echo=TRUE}
 
 library(RSQLite)
 setwd('C:/Users/Brett/Downloads')
@@ -35,7 +35,7 @@ remove(I, II, III, IV)
 
 **Brett's initial plots**
 
-``` {r}
+``` {r echo=TRUE}
 par(mfrow=c(2,2))
 plot(Idf, main="I")
 abline(lm(Idf$y ~ Idf$x))
@@ -52,7 +52,7 @@ abline(lm(IVdf$y ~ IVdf$x))
 
 **Sonya's summaries:**
 
-``` {r}
+``` {r echo=TRUE}
 summary(Idf)
 summary(IIdf)
 summary(IIIdf)
@@ -61,7 +61,7 @@ summary(IVdf)
 
 **Tom's code using ggplot:**
 
-``` {r}
+``` {r echo=TRUE}
 db <- dbConnect(SQLite(), dbname="cunyweek9.sqlite") ## connect to db
 dbListTables(db)dbListFields(db, "I") ##just looking
 
@@ -83,7 +83,7 @@ with(cuny9, qplot(x4,y4))
 ```
 
 **Igor's box plots:**
-``` {r}
+``` {r echo=TRUE}
 library("ggplot2", lib.loc="C:/R/R-3.1.0/library")
 source("http://peterhaschke.com/Code/multiplot.R")
 file_name <- "C:\\CUNY\\cuny9.csv"
@@ -96,7 +96,7 @@ multiplot(p1, p2, p3, p4, cols=2)
 ```
 
 **Brett's linear modeling**
-``` {r}
+``` {r echo=TRUE}
 par(mfrow=c(2,2))
 Ilm <- lm(formula = y ~ x, data = Idf)
 plot(Ilm)
@@ -117,7 +117,7 @@ plot(IVlm)
 
 **Xingjia's linear regression modeling summaries**
 
-``` {r}
+``` {r echo=TRUE}
 Ilmfit <- lm(Idf$y ~ Idf$x)
 summary(Ilmfit)
 IIlmfit <- lm(IIdf$y ~ IIdf$x)
@@ -130,8 +130,7 @@ summary(IVlmfit)
 
 **Riguel's influence measures**
 
-
-```{r}
+```{r echo=TRUE}
 
 # Influence Measures gives several measures of influence for each observation (Cook's Distance, et) and actually flags observations that it determines are influential by any of the measure
 
@@ -146,7 +145,7 @@ influence.measures(IVlm)
 
 **Lara's Durbin-Watson tests:**
 
-```{r}
+```{r echo=TRUE}
 library(lmtest)
 dwtest(Ilm)
 dwtest(IIlm)
