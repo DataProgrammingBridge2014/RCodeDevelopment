@@ -152,3 +152,69 @@ dwtest(IIlm)
 dwtest(IIIlm)
 dwtest(IVlm)
 ```
+
+
+**Cheryl's Imaginary Models:** 
+*all of cheryl's rather verbose commentary is included below. Please edit/trim/move/delete what isn't useful*
+
+If we assume this is real data from some mysterious processes, we would notice that there seems to be a relationship between the different data sets, most obvious in I - III, where the X values are identical.
+
+Two alternate approaches of looking at the data: 
+1.  Combine all x,y data points into a single data set 
+2.  Create a multivariate model with x as the dependent variable
+
+```{r}
+# read data form csv to dataframe
+# wil need to modify data source to be consistent with the rest of the document, this points to the CSV file on my compute
+library(plotting2)
+cuny9 = read.csv("C:/Users/Cheryl/Documents/R/cuny9.csv", stringsAsFactors = FALSE)
+
+```
+##### 1.  Combine data points into single data set
+
+Notes about combining all 4 data sets: 
+Looking at all of the data as a single x,y linear model gives a fair P value, better than the individual models, even with data set IV included. If we use this as a model the outliers aren't so impactful. It is nice to be able to leave all the data in the model because given the small number of observations within each data set, it is really difficult to know if the outliers are valid and should be included, sometimes the skewing is entirely appropriate.
+
+```{r}
+obs <- length(cuny9$x1)  # get number of obs. for each data set
+#create vector  that indicates the data source for the x and y values 
+dataset <- as.vector(c(rep("I",obs),rep("II",obs), rep("III",obs), rep("IV",obs))) 
+cunyy <- as.vector(c(cuny9$y1, cuny9$y2, cuny9$y3, cuny9$y4))  #combine all y's
+cunyx <- as.vector(c(cuny9$x1, cuny9$x2, cuny9$x3, cuny9$x4))  #combine all x's
+#Create data frame
+cunyxy <- data.frame(cunyx, cunyy, dataset)
+```
+
+plot all 4 sets together
+```{r fig.width=7, fig.height=6}
+e <- ggplot(data = cunyxy, aes(x=cunyx, y= cunyy))
+e + geom_point(aes(color = dataset), size = 6)+geom_smooth(method = lm)+ labs(x="X values", y = "Y values")
+```
+
+model summary
+```{r}
+lm4 <- lm(cunyx ~ cunyy,data = cunyxy)
+summary(lm4)
+
+```
+##### 2.  multivariate with y1, y2, y3 as predictors of x
+
+Notes about a multivariate model:
+What if this is a model of 11 observations, and the y1,y2,y3,y4 are supposed to be attributes of x?. Since x1=x2 = x3,  perhaps the data collection for y1, y2, y3 functioned correctly, but something went terribly wrong with data collection in data set IV. In this case it might be a good idea to try and model the x  with just the first 3 sets of 'good' data. That gives some entertaining results, nice R, and pvalue
+
+```{r}
+# combine data sets, sum of y as predictors of x value
+cunyy <- as.vector(cuny9$y1 + cuny9$y2 + cuny9$y3) #adding y's for I, II, and III
+cunyx <- as.vector(cuny9$x1)  #x1 = x2 = x3 = x
+cunyxy <- data.frame(cunyx, cunyy)
+
+```
+graph model
+```{r fig.width=7, fig.height=6}
+e <- ggplot(data = cunyxy, aes(y=cunyx, x= cunyy))
+e + geom_point(size = 4, color ="green3")+geom_smooth(method = lm)+labs(x="X values", y = "Y values")
+```
+summary of model
+```{r}
+lm3 <- lm(cunyx ~ cunyy, data = cunyxy)
+summary(lm3)
