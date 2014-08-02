@@ -2,7 +2,7 @@ Week 9 - Group Submission - R
 ==================================================================================
 
 ## Conclusions
-This is where the general summary of the findings should go.
+These four datasets are together known as Anscombe's Quartet, developed in 1973 by professor Francis Anscombe. With nearly identical means, sample variances, correlation coefficients and linear regression lines, these datasets demonstrate the  significance of graphically visualizing data, as well as the potentially large influence on the data of one or two significant outliers. Using R and Python code, our team was able to analyze both the similarities and differences of the datasets in this quartet. The primary takeaway of this exercise is the idea that representing data graphically is at least as significant as running layers of strictly quantitative analysis.
 
 ## Section Categories
 Here we should break up our documentation into sections with our code and supporting visualizations.
