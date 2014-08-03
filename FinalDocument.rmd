@@ -1,0 +1,210 @@
+Week 9 - Group Submission - R
+==================================================================================
+
+## Conclusions
+These four data sets are together known as Anscombe's Quartet, developed in 1973 by professor Francis Anscombe. With nearly identical means, sample variances, correlation coefficients and linear regression lines, these data sets demonstrate the  significance of graphically visualizing data, as well as the potentially large influence on the data of one or two significant outliers. Using R and Python code, our team was able to analyze both the similarities and differences of the data sets in this quartet. The primary takeaway of this exercise is the idea that representing data graphically is at least as significant as running layers of strictly quantitative analysis.
+
+## Section Categories
+Here we should break up our documentation into sections with our code and supporting visualizations.
+
+## Workspace
+Below is consolidated code from the team
+
+**Import Data**
+```{r,warning=FALSE}
+# from github cuny9.csv file
+library(bitops)
+library(RCurl)
+
+options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")))
+fileurl= "https://raw.githubusercontent.com/DataProgrammingBridge2014/RCodeDevelopment/master/cuny9.csv"
+data <- getURL(fileurl)
+cuny9 <- read.csv(text = data)
+
+# split data into data sets
+Idf <- data.frame(x = cuny9$x1, y = cuny9$y1)
+IIdf <- data.frame(x = cuny9$x2, y = cuny9$y2)
+IIIdf <- data.frame(x = cuny9$x3, y = cuny9$y3)
+IVdf <- data.frame(x = cuny9$x4, y = cuny9$y4)
+```
+
+**Initial plots**
+
+``` {r echo=TRUE}
+par(mfrow=c(2,2))
+plot(Idf, main="I")
+abline(lm(Idf$y ~ Idf$x))
+plot(IIdf, main="II")
+abline(lm(IIdf$y ~ IIdf$x))
+plot(IIIdf, main="III")
+abline(lm(IIIdf$y ~ IIIdf$x))
+plot(IVdf, main="IV")
+abline(lm(IVdf$y ~ IVdf$x))
+```
+
+We can see that all four have a very similar regression line, but obviously those regression lines don't tell us very much about II, III, or IV.
+
+
+**Summaries:**
+
+``` {r echo=TRUE}
+summary(Idf)
+summary(IIdf)
+summary(IIIdf)
+summary(IVdf)
+```
+**Basic Plots for LInear Model **
+
+Shows Residuals vs. Fitted values, Theoretical Quantiles, Scale-Location, and Residuals vs. Leverage for a linear model for each data set I-IV
+```{r}
+#Now let's make a more accurate predition model: (each lm makes 4 pictures)
+par(mfrow=c(2,2))
+Ilm <- lm(formula = y ~ x, data = Idf)
+plot(Ilm)
+#II
+IIlm <- lm(formula = y ~ x, data = IIdf)
+plot(IIlm)
+#III
+IIIlm <- lm(formula = y ~ x, data = IIIdf)
+plot(IIIlm)
+#IV
+IVlm <- lm(formula = y ~ x, data = IVdf)
+plot(IVlm)
+```
+
+
+**Correlation and Plots Using ggplot2**
+```{r,warning=FALSE}
+library(ggplot2)
+library(grid)
+library(gridExtra)
+
+cor(cuny9)
+
+plt1 <-ggplot(cuny9, aes(x=x1, y=y1)) + geom_point(shape=1) + geom_smooth(method=lm)+ggtitle("I")
+plt2 <-ggplot(cuny9, aes(x=x2, y=y2)) + geom_point(shape=1) + geom_smooth(method=lm)+ggtitle("II")
+plt3<-ggplot(cuny9, aes(x=x3, y=y3)) + geom_point(shape=1) + geom_smooth(method=lm)+ggtitle("III")
+plt4<-ggplot(cuny9, aes(x=x4, y=y4)) + geom_point(shape=1) + geom_smooth(method=lm)+ggtitle("IV")
+```
+
+```{r,fig.width=6}
+
+grid.arrange(plt1,plt2,plt3,plt4)
+```
+
+```{r}
+fit1 <- lm(y1 ~ x1, cuny9)
+summary(fit1)
+fit2 <- lm(y2 ~ x2, cuny9)
+summary(fit2)
+fit3 <- lm(y3 ~ x3, cuny9)
+summary(fit3)
+fit4 <- lm(y4 ~ x4, cuny9)
+summary(fit4)
+
+```
+
+**Coefficient Plots and Residuals
+```{r}
+library(coefplot)
+
+multiplot(fit1, fit2, fit3, fit4)
+
+#Fitted and residuals
+plotfit1 <- ggplot(aes(x=.fitted, y=.resid), data=fit1)+geom_point()+geom_hline(yintercept=0)+geom_smooth(method = lm, se=F)+labs(x="Fitted Values", y="Residuals")
+plotfit2 <- ggplot(aes(x=.fitted, y=.resid), data=fit2)+geom_point()+geom_hline(yintercept=0)+geom_smooth(method = lm, se=F)+labs(x="Fitted Values", y="Residuals")
+plotfit3 <- ggplot(aes(x=.fitted, y=.resid), data=fit3)+geom_point()+geom_hline(yintercept=0)+geom_smooth(method = lm, se=F)+labs(x="Fitted Values", y="Residuals")
+plotfit4 <- ggplot(aes(x=.fitted, y=.resid), data=fit4)+geom_point()+geom_hline(yintercept=0)+geom_smooth(method = lm, se=F)+labs(x="Fitted Values", y="Residuals")
+
+suppressWarnings(
+  suppressMessages(
+  grid.arrange(plotfit1, plotfit2,plotfit3,plotfit4, 
+                              ncol=2, main = "Fitted Values vs. Residuals")))
+
+```
+**Theoretical Quantiles**
+ The theoretical (model generated) points are plotted against the sample data.  The shape of this graph and it's relation to the x=y line provides information about the fit of the model. 
+
+```{r}
+qqdat1 <- ggplot(fit1, aes(sample=.stdresid))+stat_qq()+geom_abline()+ggtitle("I")
+qqdat2 <- ggplot(fit2, aes(sample=.stdresid))+stat_qq()+geom_abline()+ggtitle("II")
+qqdat3 <- ggplot(fit3, aes(sample=.stdresid))+stat_qq()+geom_abline()+ggtitle("III")
+qqdat4 <- ggplot(fit4, aes(sample=.stdresid))+stat_qq()+geom_abline()+ggtitle("IV")
+
+suppressWarnings(
+  suppressMessages(
+    grid.arrange(qqdat1, qqdat2, qqdat3, qqdat4, 
+                 ncol=2, main = "Theoretical Quantile Plots")))
+```
+
+**Influence Measures**
+Influence Measures gives several measures of influence for each observation (Cook's Distance, et) and actually flags observations that it determines are influential by any of the measure. Generally any value over 1 indicates that observation has significant influence.
+
+```{r echo=TRUE}
+
+influence.measures(Ilm)
+
+influence.measures(IIlm)
+
+influence.measures(IIIlm)
+
+influence.measures(IVlm)
+```
+
+**Durbin-Watson Tests**
+Durbin-Watson tests for auto-correlation within the data by comparing sequential residuals of a model. A result will be between 0 and 4, with 2 indicating no auto-correlation, and values substantially different from 2 indicate that there may be cause for concern. 
+
+```{r echo=TRUE}
+library(lmtest)
+dwtest(Ilm)
+dwtest(IIlm)
+dwtest(IIIlm)
+dwtest(IVlm)
+```
+
+**Alternate Models**
+Evaluating two models assuming the data sets are somehow related
+
+##### 1.  Combine all x and y data points into single data set
+```{r}
+obs <- length(cuny9$x1)  # get number of obs. for each data set
+#create vector  that indicates the data source for the x and y values 
+dataset <- as.vector(c(rep("I",obs),rep("II",obs), rep("III",obs), rep("IV",obs))) 
+cunyy <- as.vector(c(cuny9$y1, cuny9$y2, cuny9$y3, cuny9$y4))  #combine all y's
+cunyx <- as.vector(c(cuny9$x1, cuny9$x2, cuny9$x3, cuny9$x4))  #combine all x's
+#Create data frame
+cunyxy <- data.frame(cunyx, cunyy, dataset)
+```
+
+plot all 4 sets together
+```{r fig.width=7, fig.height=6}
+e <- ggplot(data = cunyxy, aes(x=cunyx, y= cunyy))
+e + geom_point(aes(color = dataset), size = 5)+geom_smooth(method = lm)+ labs(x="X values", y = "Y values")
+```
+
+model summary
+```{r}
+lm4 <- lm(cunyx ~ cunyy,data = cunyxy)
+summary(lm4)
+
+```
+##### 2.  Multivariate with y1, y2, y3 as predictors of x
+
+```{r}
+# combine data sets, sum of y as predictors of x value
+cunyy <- as.vector(cuny9$y1 + cuny9$y2 + cuny9$y3) #adding y's for I, II, and III
+cunyx <- as.vector(cuny9$x1)  #x1 = x2 = x3 = x
+cunyxy <- data.frame(cunyx, cunyy)
+
+```
+
+graph model
+```{r fig.width=7, fig.height=6}
+e <- ggplot(data = cunyxy, aes(y=cunyx, x= cunyy))
+e + geom_point(size = 4, color ="green3")+geom_smooth(method = lm)+labs(x="X values", y = "Y values")
+```
+
+model summary
+```{r}
+lm3 <- lm(cunyx ~ cunyy, data = cunyxy)
+summary(lm3)
