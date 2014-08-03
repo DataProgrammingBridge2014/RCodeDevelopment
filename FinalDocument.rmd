@@ -182,7 +182,7 @@ e <- ggplot(data = cunyxy, aes(x=cunyx, y= cunyy))
 e + geom_point(aes(color = dataset), size = 5)+geom_smooth(method = lm)+ labs(x="X values", y = "Y values")
 ```
 
-model summary
+#model summary
 ```{r}
 lm4 <- lm(cunyx ~ cunyy,data = cunyxy)
 summary(lm4)
@@ -198,13 +198,13 @@ cunyxy <- data.frame(cunyx, cunyy)
 
 ```
 
-graph model
+#graph model
 ```{r fig.width=7, fig.height=6}
 e <- ggplot(data = cunyxy, aes(y=cunyx, x= cunyy))
 e + geom_point(size = 4, color ="green3")+geom_smooth(method = lm)+labs(x="X values", y = "Y values")
 ```
 
-model summary
+#model summary
 ```{r}
 lm3 <- lm(cunyx ~ cunyy, data = cunyxy)
 summary(lm3)
